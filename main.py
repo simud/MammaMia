@@ -19,7 +19,7 @@ async def generate_m3u8():
             for attempt in range(3):  # Riprova fino a 3 volte
                 try:
                     print(f"[INFO] Tentativo {attempt + 1} per '{title}' (ID: {content_id})")
-                    url, url720, quality = await streaming_community(content_id, client, "1")
+                    url, url720, quality = await streaming_community(content_id, client, "1", title)
                     if url:
                         print(f"[SUCCESSO] Flusso trovato per '{title}': {url} (Qualità: {quality})")
                         encoded_title = urllib.parse.quote_plus(title.replace(" ", "+").replace("–", "+").replace("—", "+"))
@@ -33,7 +33,7 @@ async def generate_m3u8():
                         break
                     else:
                         print(f"[ERRORE] Nessun flusso trovato per '{title}' al tentativo {attempt + 1}")
-                        await asyncio.sleep(2)  # Aumentato a 2 secondi
+                        await asyncio.sleep(2)
                 except Exception as e:
                     print(f"[ERRORE] Errore per '{title}' al tentativo {attempt + 1}: {str(e)}")
                     await asyncio.sleep(2)
