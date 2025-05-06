@@ -3,8 +3,15 @@ from curl_cffi.requests import AsyncSession
 from streaming_community import streaming_community
 import urllib.parse
 import os
+import Src.Utilities.config as config
 
-# Titoli verificati su https://streamingcommunity.education
+# Configurazione dinamica del dominio
+SC_DOMAIN = config.SC_DOMAIN
+REFERRER = f"https://streamingcommunity.{SC_DOMAIN}"
+ORIGIN = f"https://streamingcommunity.{SC_DOMAIN}"
+USER_AGENT = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1"
+
+# Lista dei contenuti
 CONTENT_LIST = [
     ("tt0111161", 1, None, None, "Le ali della libertà"),  # Film: The Shawshank Redemption
     ("tt0468569", 1, None, None, "Il cavaliere oscuro"),   # Film: The Dark Knight
@@ -22,12 +29,21 @@ async def generate_m3u8():
                     url, url720, quality = await streaming_community(content_id, client, "1", title)
                     if url:
                         print(f"[SUCCESSO] Flusso trovato per '{title}': {url} (Qualità: {quality})")
-                        encoded_title = urllib.parse.quote_plus(title.replace(" ", "+").replace("–", "+").replace("—", "+"))
-                        m3u8_content += f'#EXTINF:-1 tvg-name="{title}" tvg-quality="{quality}",{title}\n'
+                        # Formato personalizzato per la voce M3U8
+                        tvg_id = content_id.replace("tmdb:", "").replace("tt", "sc")  # Es. sc0111161
+                        group_title = "StreamingCommunity"
+                        tvg_logo = "https://i.postimg.cc/j5d5bSGp/photo-2025-03-13-12-56-42.png"  # Logo placeholder
+                        m3u8_content += f'#EXTINF:-1 tvg-id="{tvg_id}" group-title="{group_title}" tvg-logo="{tvg_logo}",{title}\n'
+                        m3u8_content += f'#EXTVLCOPT:http-referrer={REFERRER}\n'
+                        m3u8_content += f'#EXTVLCOPT:http-origin={ORIGIN}\n'
+                        m3u8_content += f'#EXTVLCOPT:http-user-agent={USER_AGENT}\n'
                         m3u8_content += f"{url}\n"
                         if url720 and url720 != url:
                             print(f"[SUCCESSO] Flusso 720p trovato per '{title}': {url720}")
-                            m3u8_content += f'#EXTINF:-1 tvg-name="{title} (720p)" tvg-quality="720p",{title} (720p)\n'
+                            m3u8_content += f'#EXTINF:-1 tvg-id="{tvg_id}_720" group-title="{group_title}" tvg-logo="{tvg_logo}",{title} (720p)\n'
+                            m3u8_content += f'#EXTVLCOPT:http-referrer={REFERRER}\n'
+                            m3u8_content += f'#EXTVLCOPT:http-origin={ORIGIN}\n'
+                            m3u8_content += f'#EXTVLCOPT:http-user-agent={USER_AGENT}\n'
                             m3u8_content += f"{url720}\n"
                         found_streams += 1
                         break
