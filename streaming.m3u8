@@ -1,16 +1,11 @@
 #EXTM3U
-#EXTINF:-1 tvg-id="sc0111161" group-title="StreamingCommunity" tvg-logo="https://i.postimg.cc/j5d5bSGp/photo-2025-03-13-12-56-42.png",Le ali della libertà
+#EXTINF:-1 tvg-id="sc0468569" group-title="StreamingCommunity" tvg-logo="https://i.postimg.cc/j5d5bSGp/photo-2025-03-13-12-56-42.png",Il cavaliere oscuro
 #EXTVLCOPT:http-referrer=https://streamingcommunity.education
 #EXTVLCOPT:http-origin=https://streamingcommunity.education
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
-https://vixcloud.co/playlist/206273?token=c216cf407fd61169a29a6c40818f8c15&expires=1751741509&h=1
-#EXTINF:-1 tvg-id="sc0468569" group-title="StreamingCommunity" tvg-logo="https://i.postimg.cc/j5d5bSGp/photo-2025-03-13-12-56-42.png",Il cavaliere oscuro d
-#EXTVLCOPT:http-referrer=https://streamingcommunity.education
-#EXTVLCOPT:http-origin=https://streamingcommunity.education
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
-https://vixcloud.co/playlist/112147?token=f72c0b20a3ecf55691338358385c1d39&expires=1751741160&h=1
+https://vixcloud.co/playlist/112147?token=dfcf8434fb69d998efc4199d89be4dce&expires=1751741892&h=1
 #EXTINF:-1 tvg-id="1399:1:1" group-title="StreamingCommunity" tvg-logo="https://i.postimg.cc/j5d5bSGp/photo-2025-03-13-12-56-42.png",Il Trono di Spade
 #EXTVLCOPT:http-referrer=https://streamingcommunity.education
 #EXTVLCOPT:http-origin=https://streamingcommunity.education
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
-https://vixcloud.co/playlist/173365?token=8322ffa2b1345033ffcb123b232c4d59&expires=1751741512&h=1
+https://vixcloud.co/playlist/173365?token=ffc1322fae22bde1485b7fa5675c9e0d&expires=1751741893&h=1
