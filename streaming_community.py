@@ -298,6 +298,7 @@ async def streaming_community(imdb, client, SC_FAST_SEARCH, title):
                 print(f"[ERRORE] Ricerca fallita per '{showname}'")
                 return None, None, None
         
+        version = await get_version(client)
         if ismovie == 1:
             url, url720, quality = await get_film(tid, version, client)
             if url:
