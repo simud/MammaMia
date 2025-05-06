@@ -1,1 +1,13 @@
 #EXTM3U
+#EXTINF:-1 tvg-name="Le ali della libertà" tvg-quality="1080",Le ali della libertà
+https://vixcloud.co/playlist/206273.m3u8?token=b5f8adbf461ffc832fea4f78952ba460&expires=1751732759&h=1
+#EXTINF:-1 tvg-name="Le ali della libertà (720p)" tvg-quality="720p",Le ali della libertà (720p)
+https://vixcloud.co/playlist/206273.m3u8
+#EXTINF:-1 tvg-name="Il cavaliere oscuro" tvg-quality="1080",Il cavaliere oscuro
+https://vixcloud.co/playlist/112147.m3u8?token=32f01faa3ede0cc917786c8efdae7877&expires=1751732760&h=1
+#EXTINF:-1 tvg-name="Il cavaliere oscuro (720p)" tvg-quality="720p",Il cavaliere oscuro (720p)
+https://vixcloud.co/playlist/112147.m3u8
+#EXTINF:-1 tvg-name="Il Trono di Spade" tvg-quality="1080",Il Trono di Spade
+https://vixcloud.co/playlist/173365.m3u8?token=ec68e248cb0ed3cfcb1ee572de51265d&expires=1751732762&h=1
+#EXTINF:-1 tvg-name="Il Trono di Spade (720p)" tvg-quality="720p",Il Trono di Spade (720p)
+https://vixcloud.co/playlist/173365.m3u8
