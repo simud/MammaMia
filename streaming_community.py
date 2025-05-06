@@ -71,9 +71,11 @@ async def search(query, date, ismovie, client, SC_FAST_SEARCH):
                 type_value = 0
             elif item_type == "movie":
                 type_value = 1
-            if type_value == ismovie and (item_title == query_title or query_title in item_title):
-                print(f"[SUCCESSO] Trovato titolo con tid={tid}, slug={slug}, titolo={item_title}")
-                return tid, slug
+            if type_value == ismovie:
+                # Corrispondenza più precisa
+                if query_title in item_title or item_title == query_title:
+                    print(f"[SUCCESSO] Trovato titolo con tid={tid}, slug={slug}, titolo={item_title}")
+                    return tid, slug
         print(f"[ERRORE] Nessun titolo trovato per '{query_title}'")
         return None, None
     except Exception as e:
@@ -117,8 +119,17 @@ async def get_film(tid, version, client):
         })
         resp = await client.get(iframe_url, headers=random_headers, allow_redirects=True, impersonate="chrome124")
         if resp.status_code != 200:
-            print(f"[ERRORE] Risposta non valida per iframe content: {resp.status_code}")
-            return None, None, None
+            tentativi = 3
+            for i in range(tentativi):
+                print(f"[INFO] Tentativo {i + 1} per iframe content: {iframe_url}")
+                resp = await client.get(iframe_url, headers=random_headers, allow_redirects=True, impersonate="chrome124")
+                if resp.status_code == 200:
+                    print(f"[SUCCESSO] Risposta valida per iframe content al tentativo {i + 1}")
+                    break
+                await asyncio.sleep(5)
+            else:
+                print(f"[ERRORE] Risposta non valida per iframe content dopo {tentativi} tentativi: {resp.status_code}")
+                return None, None, None
         soup = BeautifulSoup(resp.text, "lxml")
         script = soup.find("body").find("script")
         if not script:
@@ -219,8 +230,17 @@ async def get_episode_link(episode_id, tid, version, client):
         })
         resp = await client.get(iframe_url, headers=random_headers, allow_redirects=True, impersonate="chrome124")
         if resp.status_code != 200:
-            print(f"[ERRORE] Risposta non valida per iframe episodio: {resp.status_code}")
-            return None, None, None
+            tentativi = 3
+            for i in range(tentativi):
+                print(f"[INFO] Tentativo {i + 1} per iframe episodio: {iframe_url}")
+                resp = await client.get(iframe_url, headers=random_headers, allow_redirects=True, impersonate="chrome124")
+                if resp.status_code == 200:
+                    print(f"[SUCCESSO] Risposta valida per iframe episodio al tentativo {i + 1}")
+                    break
+                await asyncio.sleep(5)
+            else:
+                print(f"[ERRORE] Risposta non valida per iframe episodio dopo {tentativi} tentativi: {resp.status_code}")
+                return None, None, None
         soup = BeautifulSoup(resp.text, "lxml")
         script = soup.find("body").find("script")
         if not script:
