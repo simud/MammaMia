@@ -16,7 +16,7 @@ PROXY = config.PROXY if hasattr(config, 'PROXY') else None
 
 # Lista dei contenuti
 CONTENT_LIST = [
-    ("tt0111161", 1, None, None, "The Shawshank Redemption"),  # Titolo inglese per precisione
+    ("tt0111161", 1, None, None, "The Shawshank Redemption"),
     ("tt0468569", 1, None, None, "Il cavaliere oscuro"),
     ("tmdb:1399:1:1", 0, 1, 1, "Il Trono di Spade"),
 ]
@@ -29,7 +29,7 @@ async def generate_m3u8():
         session_params["proxies"] = {"http": PROXY, "https": PROXY}
     
     async with AsyncSession(**session_params) as client:
-        # Inizializza la sessione con una richiesta preliminare
+        # Inizializza la sessione
         try:
             await client.get(f"https://streamingcommunity.{SC_DOMAIN}/", headers={
                 "User-Agent": USER_AGENT,
@@ -41,12 +41,13 @@ async def generate_m3u8():
             print(f"[ERRORE] Errore inizializzazione sessione: {str(e)}")
         
         for content_id, is_movie, season, episode, title in CONTENT_LIST:
-            for attempt in range(4):  # Aumentato a 4 tentativi
+            stream_added = False
+            for attempt in range(4):
                 try:
                     print(f"[INFO] Tentativo {attempt + 1} per '{title}' (ID: {content_id})")
                     url, url720, quality = await streaming_community(content_id, client, "1", title)
                     if url and "vixcloud.co/playlist" in url:
-                        # Test flusso 1080p con più tentativi
+                        # Test flusso 1080p
                         for test_attempt in range(3):
                             test_response = await client.get(
                                 url,
@@ -78,16 +79,16 @@ async def generate_m3u8():
                                         m3u8_content += f'#EXTVLCOPT:http-user-agent={USER_AGENT}\n'
                                         m3u8_content += f"{url720}\n"
                                 found_streams += 1
-                                break
+                                stream_added = True
+                                break  # Esci dal ciclo di test
                             else:
                                 print(f"[ERRORE] Flusso non valido per '{title}' (status: {test_response.status_code}, tentativo {test_attempt + 1})")
                             await asyncio.sleep(5)
-                        else:
-                            print(f"[ERRORE] Flusso non valido per '{title}' dopo 3 tentativi")
-                            continue
+                        if stream_added:
+                            break  # Esci dal ciclo di tentativi principali
                     else:
                         print(f"[ERRORE] Flusso non trovato per '{title}' al tentativo {attempt + 1}")
-                    await asyncio.sleep(12)  # Ritardo aumentato
+                    await asyncio.sleep(12)
                 except Exception as e:
                     print(f"[ERRORE] Errore per '{title}' al tentativo {attempt + 1}: {str(e)}")
                     await asyncio.sleep(12)
