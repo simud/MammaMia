@@ -6,32 +6,31 @@ import json
 env_vars = load_env()
 TMDB_KEY = env_vars.get('TMDB_KEY')
 
-
-def get_info_tmdb(tmbda,ismovie,type):
+def get_info_tmdb(tmbda, ismovie, type):
     tmdb = TMDb()
     tmdb.api_key = f'{TMDB_KEY}'
     tmdb.language = 'it'
     if ismovie == 0:
         tv = TV()
-        show= tv.details(tmbda)
+        show = tv.details(tmbda)
         showname = show.name
         if type == "Filmpertutti":
-            date= show.first_air_date
+            date = show.first_air_date
             date = date.split("-")[0]
-            print("Real date",date)
-            return showname,date
+            print("Real date", date)
+            return showname, date
         elif type == "StreamingCommunity":
             full_date = show.first_air_date
             date = full_date.split("-")[0]
             print(date)
-            return showname,date
+            return showname, date
         elif type == "StreamingCommunityFS":
-                return showname
+            return showname
         elif type == "Tantifilm":
             date = show.first_air_date
             date = date.split("-")[0]
-            print("Real date",date)
-            return showname,date
+            print("Real date", date)
+            return showname, date
         elif type == "TantifilmFS":
             return showname
         elif type == "Cool":
@@ -39,92 +38,90 @@ def get_info_tmdb(tmbda,ismovie,type):
         elif type == "LordChannel":
             date = show.first_air_date
             date = date.split("-")[0]
-            print("Real date",date)
-            return showname,date
+            print("Real date", date)
+            return showname, date
         elif type == "StreamingWatch":
             date = show.first_air_date
             date = date.split("-")[0]
-            print("Real date",date)
-            return showname,date
+            print("Real date", date)
+            return showname, date
         elif type == "DDLStream":
             return showname
         elif type == "Cb01":
             date = show.first_air_date
             date = date.split("-")[0]
-            return showname,date
+            return showname, date
         elif type == "Whvx":
             date = show.first_air_date
             date = date.split("-")[0]
-            return showname,date
+            return showname, date
     
     elif ismovie == 1:
         movie = Movie()
-        show= movie.details(tmbda)
-        showname= show.title
-        #Get all release dates
+        show = movie.details(tmbda)
+        showname = show.title
         if type == "Filmpertutti":
-            date = show.release_dates
+            date = show.release_date
             date = date.split("-")[0]
-            #GET US RELEASE DATE because filmpertutti somewhy uses US release date
-            return showname,date
+            return showname, date
         elif type == "StreamingCommunity":
-            date = show.release_dates
+            date = show.release_date
             date = date.split("-")[0]
-            return showname
+            return showname, date
         elif type == "StreamingCommunityFS":
             return showname
         elif type == "Tantifilm":
             date = show.release_date
             date = date.split("-")[0]
-            print("Real date",date)
-            return showname,date
+            print("Real date", date)
+            return showname, date
         elif type == "TantifilmFS":
-                return showname
+            return showname
         elif type == "Cool":
             return showname
         elif type == "LordChannel":
             date = show.release_date
             date = date.split("-")[0]
-            print("Real date",date)
-            return showname,date
+            print("Real date", date)
+            return showname, date
         elif type == "StreamingWatch":
             date = show.release_date
             date = date.split("-")[0]
-            print("Real date",date)
-            return showname,date
+            print("Real date", date)
+            return showname, date
         elif type == "DDLStream":
             return showname
         elif type == "Cb01":
             date = show.release_date
             date = date.split("-")[0]
-            return showname,date
+            return showname, date
         elif type == "Whvx":
             date = show.release_date
             date = date.split("-")[0]
-            return showname,date
+            return showname, date
 
-async def get_info_imdb(imdb_id, ismovie, type,client):
+async def get_info_imdb(imdb_id, ismovie, type, client):
     resp = await client.get(f'https://api.themoviedb.org/3/find/{imdb_id}?api_key={TMDB_KEY}&language=it&external_source=imdb_id')
     data = resp.json()
     if ismovie == 0:     
         showname = data['tv_results'][0]['name']
         if type == "Filmpertutti":
-            date= data['tv_results'][0]['first_air_date']
+            date = data['tv_results'][0]['first_air_date']
             date = date.split("-")[0]
-            print("Real date",date)
+            print("Real date", date)
             return showname, date
         elif type == "StreamingCommunity":
             date = data['tv_results'][0]['first_air_date']
             date = date.split("-")[0]
-            return showname,date
+            return showname, date
         elif type == "StreamingCommunityFS":
             return showname
         elif type == "Tantifilm":
             date = data['tv_results'][0]['first_air_date']
             date = date.split("-")[0]
-            return showname,date
+            return showname, date
         elif type == "TantifilmFS":
-                return showname
+            return showname
         elif type == "Cool":
             return showname
         elif type == "DDLStream":
@@ -132,28 +129,27 @@ async def get_info_imdb(imdb_id, ismovie, type,client):
         elif type == "Cb01":
             date = data['tv_results'][0]['first_air_date']
             date = date.split("-")[0]
-            return showname,date
+            return showname, date
         elif type == "Whvx":
             date = data['tv_results'][0]['first_air_date']
             date = date.split("-")[0]
-            return showname,date
-
+            return showname, date
     elif ismovie == 1:
-        showname= data['movie_results'][0]['title']
+        showname = data['movie_results'][0]['title']
         if type == "Filmpertutti":
             date = data['movie_results'][0]['release_date']
             date = date.split("-")[0]
-            return showname,date
+            return showname, date
         elif type == "StreamingCommunity":
             date = data['movie_results'][0]['release_date']
             date = date.split("-")[0]
-            return showname,date
+            return showname, date
         elif type == "StreamingCommunityFS":
             return showname
         elif type == "Tantifilm":
             date = data['movie_results'][0]['release_date']
             date = date.split("-")[0]
-            return showname,date
+            return showname, date
         elif type == "Cool":
             return showname
         elif type == "DDLStream":
@@ -161,33 +157,29 @@ async def get_info_imdb(imdb_id, ismovie, type,client):
         elif type == "Cb01":
             date = data['movie_results'][0]['release_date']
             date = date.split("-")[0]
-            return showname,date
+            return showname, date
         elif type == "Whvx":
             date = data['movie_results'][0]['release_date']
             date = date.split("-")[0]
-            return showname,date
+            return showname, date
 
-
-async def get_info_kitsu(kitsu_id,client):
+async def get_info_kitsu(kitsu_id, client):
     api_url = f'https://kitsu.io/api/edge/anime/{kitsu_id}'
     response = await client.get(api_url)
     data = json.loads(response.text)
     showname = data['data']['attributes']['canonicalTitle']
     date = data['data']['attributes']['startDate']
-    return showname,date           
-
-
-
+    return showname, date
 
 def is_movie(imdb_id):
     if "tmdb:" in imdb_id:
-        imdb_id = imdb_id.replace("tmdb:","")
-    if ":"  in imdb_id:
+        imdb_id = imdb_id.replace("tmdb:", "")
+    if ":" in imdb_id:
         season = imdb_id.split(":")[1]
         episode = imdb_id.split(":")[-1]
         ismovie = 0
         imdb_id = imdb_id.split(":")[0]
-        return ismovie,imdb_id,season,episode
+        return ismovie, imdb_id, season, episode
     else:
         ismovie = 1
-        return ismovie,imdb_id
+        return ismovie, imdb_id
