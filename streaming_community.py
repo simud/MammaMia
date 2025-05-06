@@ -47,12 +47,18 @@ async def search(query, date, ismovie, client, SC_FAST_SEARCH):
         for item in response_data.get('data', []):
             tid = item['id']
             slug = item['slug']
+            item_title = item.get('name', '').lower()
             type = item['type']
             if type == "tv":
                 type = 0
             elif type == "movie":
                 type = 1
-            if type == ismovie: 
+            if type == ismovie:
+                # Verifica se il titolo corrisponde esattamente
+                query_title = urllib.parse.unquote(query.split('q=')[1]).lower().replace('+', ' ')
+                if item_title == query_title or query_title in item_title:
+                    print(f"[SUCCESSO] Trovato titolo con tid={tid}, slug={slug}, titolo={item_title}")
+                    return tid, slug
                 if SC_FAST_SEARCH == "0":
                     random_headers = headers.generate()
                     random_headers['Referer'] = f"https://streamingcommunity.{SC_DOMAIN}/"
@@ -63,9 +69,9 @@ async def search(query, date, ismovie, client, SC_FAST_SEARCH):
                     if match:
                         print(f"[INFO] Anno trovato: {match.group(1).split('-')[0]}")
                         first_air_year = match.group(1).split("-")[0]
-                        date = int(date)
+                        date = int(date) if date else None
                         first_air_year = int(first_air_year)
-                        if first_air_year == date:
+                        if date and first_air_year == date:
                             print(f"[SUCCESSO] Trovato titolo con tid={tid}, slug={slug}")
                             return tid, slug
                 elif SC_FAST_SEARCH == "1":
@@ -85,29 +91,50 @@ async def get_film(tid, version, client):
     random_headers['x-inertia-version'] = version
     url = f'https://streamingcommunity.{SC_DOMAIN}/iframe/{tid}'
     try:
+        print(f"[INFO] Recupero iframe per tid={tid}")
         response = await client.get(url, headers=random_headers, allow_redirects=True, impersonate="chrome124")
-        iframe = BeautifulSoup(response.text, 'lxml')
-        iframe = iframe.find('iframe').get("src")
-        vixid = iframe.split("/embed/")[1].split("?")[0]
-        parsed_url = urlparse(iframe)
+        if response.status_code != 200:
+            print(f"[ERRORE] Risposta non valida per iframe: {response.status_code}")
+            return None, None, None
+        iframe = BeautifulSoup(response.text, 'lxml').find('iframe')
+        if not iframe:
+            print("[ERRORE] Iframe non trovato")
+            return None, None, None
+        iframe_url = iframe.get("src")
+        print(f"[INFO] Iframe trovato: {iframe_url}")
+        vixid = iframe_url.split("/embed/")[1].split("?")[0]
+        parsed_url = urlparse(iframe_url)
         query_params = parse_qs(parsed_url.query)
         random_headers = headers.generate()
         random_headers['Referer'] = f"https://streamingcommunity.{SC_DOMAIN}/"
         random_headers['Origin'] = f"https://streamingcommunity.{SC_DOMAIN}"
         random_headers['x-inertia'] = "true"
         random_headers['x-inertia-version'] = version
-        resp = await client.get(iframe, headers=random_headers, allow_redirects=True, impersonate="chrome124")
+        resp = await client.get(iframe_url, headers=random_headers, allow_redirects=True, impersonate="chrome124")
+        if resp.status_code != 200:
+            print(f"[ERRORE] Risposta non valida per iframe content: {resp.status_code}")
+            return None, None, None
         soup = BeautifulSoup(resp.text, "lxml")
-        script = soup.find("body").find("script").text
-        token = re.search(r"'token':\s*'(\w+)'", script).group(1)
-        expires = re.search(r"'expires':\s*'(\d+)'", script).group(1)
-        quality = re.search(r'"quality":(\d+)', script).group(1)
-        url = f'https://vixcloud.co/playlist/{vixid}.m3u8?token={token}&expires={expires}'
+        script = soup.find("body").find("script")
+        if not script:
+            print("[ERRORE] Script non trovato nell'iframe")
+            return None, None, None
+        script_text = script.text
+        token_match = re.search(r"'token':\s*'(\w+)'", script_text)
+        expires_match = re.search(r"'expires':\s*'(\d+)'", script_text)
+        quality_match = re.search(r'"quality":(\d+)', script_text)
+        if not (token_match and expires_match and quality_match):
+            print("[ERRORE] Parametri token, expires o quality non trovati")
+            return None, None, None
+        token = token_match.group(1)
+        expires = expires_match.group(1)
+        quality = quality_match.group(1)
+        url = f'https://vixcloud.co/playlist/{vixid}?token={token}&expires={expires}'
         if 'canPlayFHD' in query_params:
             url += "&h=1"
         if 'b' in query_params:
             url += "&b=1"
-        url720 = f'https://vixcloud.co/playlist/{vixid}.m3u8'
+        url720 = f'https://vixcloud.co/playlist/{vixid}'
         print(f"[SUCCESSO] Flusso trovato: {url}, Qualità: {quality}")
         return url, url720, quality
     except Exception as e:
@@ -121,6 +148,7 @@ async def get_season_episode_id(tid, slug, season, episode, version, client):
     random_headers['x-inertia'] = "true"
     random_headers['x-inertia-version'] = version
     try:
+        print(f"[INFO] Recupero episodio per tid={tid}, stagione={season}, episodio={episode}")
         response = await client.get(f'https://streamingcommunity.{SC_DOMAIN}/titles/{tid}-{slug}/stagione-{season}', headers=random_headers, allow_redirects=True, impersonate="chrome124")
         json_response = response.json().get('props', {}).get('loadedSeason', {}).get('episodes', [])
         for dict_episode in json_response:
@@ -142,29 +170,51 @@ async def get_episode_link(episode_id, tid, version, client):
         'next_episode': '1'
     }
     try:
+        print(f"[INFO] Recupero link episodio per tid={tid}, episode_id={episode_id}")
         response = await client.get(f"https://streamingcommunity.{SC_DOMAIN}/iframe/{tid}", params=params, headers=random_headers, allow_redirects=True, impersonate="chrome124")
+        if response.status_code != 200:
+            print(f"[ERRORE] Risposta non valida per episodio: {response.status_code}")
+            return None, None, None
         soup = BeautifulSoup(response.text, "lxml")
-        iframe = soup.find("iframe").get("src")
-        vixid = iframe.split("/embed/")[1].split("?")[0]
-        parsed_url = urlparse(iframe)
+        iframe = soup.find("iframe")
+        if not iframe:
+            print("[ERRORE] Iframe non trovato per episodio")
+            return None, None, None
+        iframe_url = iframe.get("src")
+        print(f"[INFO] Iframe episodio trovato: {iframe_url}")
+        vixid = iframe_url.split("/embed/")[1].split("?")[0]
+        parsed_url = urlparse(iframe_url)
         query_params = parse_qs(parsed_url.query)
         random_headers = headers.generate()
         random_headers['Referer'] = f"https://streamingcommunity.{SC_DOMAIN}/"
         random_headers['Origin'] = f"https://streamingcommunity.{SC_DOMAIN}"
         random_headers['x-inertia'] = "true"
         random_headers['x-inertia-version'] = version
-        resp = await client.get(iframe, headers=random_headers, allow_redirects=True, impersonate="chrome124")
+        resp = await client.get(iframe_url, headers=random_headers, allow_redirects=True, impersonate="chrome124")
+        if resp.status_code != 200:
+            print(f"[ERRORE] Risposta non valida per iframe episodio: {resp.status_code}")
+            return None, None, None
         soup = BeautifulSoup(resp.text, "lxml")
-        script = soup.find("body").find("script").text
-        token = re.search(r"'token':\s*'(\w+)'", script).group(1)
-        expires = re.search(r"'expires':\s*'(\d+)'", script).group(1)
-        quality = re.search(r'"quality":(\d+)', script).group(1)
-        url = f'https://vixcloud.co/playlist/{vixid}.m3u8?token={token}&expires={expires}'
+        script = soup.find("body").find("script")
+        if not script:
+            print("[ERRORE] Script non trovato nell'iframe episodio")
+            return None, None, None
+        script_text = script.text
+        token_match = re.search(r"'token':\s*'(\w+)'", script_text)
+        expires_match = re.search(r"'expires':\s*'(\d+)'", script_text)
+        quality_match = re.search(r'"quality":(\d+)', script_text)
+        if not (token_match and expires_match and quality_match):
+            print("[ERRORE] Parametri token, expires o quality non trovati per episodio")
+            return None, None, None
+        token = token_match.group(1)
+        expires = expires_match.group(1)
+        quality = quality_match.group(1)
+        url = f'https://vixcloud.co/playlist/{vixid}?token={token}&expires={expires}'
         if 'canPlayFHD' in query_params:
             url += "&h=1"
         if 'b' in query_params:
             url += "&b=1"
-        url720 = f'https://vixcloud.co/playlist/{vixid}.m3u8'
+        url720 = f'https://vixcloud.co/playlist/{vixid}'
         print(f"[SUCCESSO] Flusso episodio trovato: {url}, Qualità: {quality}")
         return url, url720, quality
     except Exception as e:
@@ -190,7 +240,7 @@ async def streaming_community(imdb, client, SC_FAST_SEARCH, title):
             episode = int(general[3])
             if SC_FAST_SEARCH == "1":
                 type = "StreamingCommunityFS"
-                showname = title  # Usa il titolo passato
+                showname = title
                 date = None
             elif SC_FAST_SEARCH == "0":
                 type = "StreamingCommunity"
@@ -200,7 +250,7 @@ async def streaming_community(imdb, client, SC_FAST_SEARCH, title):
         else:
             if SC_FAST_SEARCH == "1":
                 type = "StreamingCommunityFS"
-                showname = title  # Usa il titolo passato
+                showname = title
                 date = None
             elif SC_FAST_SEARCH == "0":
                 type = "StreamingCommunity"
@@ -218,7 +268,7 @@ async def streaming_community(imdb, client, SC_FAST_SEARCH, title):
         if ismovie == 1:
             url, url720, quality = await get_film(tid, version, client)
             if url:
-                print(f"[SUCCESSO] Flusso trovato per il film '{showname}'")
+                print(f"[SUCCESSO] Flusso trovato per il film '{showname}' (tid={tid})")
             return url, url720, quality
         if ismovie == 0:
             episode_id = await get_season_episode_id(tid, slug, season, episode, version, client)
