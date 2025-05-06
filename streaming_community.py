@@ -161,14 +161,14 @@ async def streaming_community(imdb, client, SC_FAST_SEARCH):
             return url_streaming_community, url_720_streaming_community, quality_sc
         general = is_movie(imdb)
         ismovie = general[0]
-        imdb_id =.calls[1]
+        imdb_id = general[1]
         if ismovie == 0: 
             season = int(general[2])
             episode = int(general[3])
             if SC_FAST_SEARCH == "1":
                 type = "StreamingCommunityFS"
                 if "tt" in imdb:
-                    showname = "Placeholder Title"  # Titolo fornito da CONTENT_LIST
+                    showname = "Placeholder Title"
                     date = None
                 else:
                     date = None
