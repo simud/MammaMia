@@ -1,41 +1,41 @@
 {
-  "Siti": {
-         "StreamingCommunity": {
-             "domain": "buzz"
-         },
-         "Filmpertutti": {
-             "domain": "app"
-         },
-         "Tantifilm":{
-             "domain": "bond"
-         },
-         "Mysterius":{
-             "enabled": "0"    
-         },
-        "LordChannel":{
-             "domain":"com"
+    "Siti": {
+        "StreamingCommunity": {
+            "domain": "education"
         },
-        "StreamingWatch":{
-            "domain":"org"
+        "Filmpertutti": {
+            "domain": "app"
         },
-        "AnimeWorld":{
-            "domain":"so"
+        "Tantifilm": {
+            "domain": "bond"
         },
-        "SkyStreaming":{
-            "domain":"guru"
+        "Mysterius": {
+            "enabled": "0"
         },
-        "DaddyLiveHD":{
-            "enabled":"1"
+        "LordChannel": {
+            "domain": "com"
+        },
+        "StreamingWatch": {
+            "domain": "org"
+        },
+        "AnimeWorld": {
+            "domain": "so"
+        },
+        "SkyStreaming": {
+            "domain": "guru"
+        },
+        "DaddyLiveHD": {
+            "enabled": "1"
         }
- },
- "General":{
-     "load_env": "0",
-     "HOST": "0.0.0.0",
-     "PORT": "8080",
-     "HF": "1",
-     "Public_Instance": "0",
-     "MediaProxy": ["Test"],
-     "ForwardProxy": ["Test"],
-     "Proxy": []
- }
+    },
+    "General": {
+        "load_env": "1",
+        "HOST": "0.0.0.0",
+        "PORT": "8080",
+        "HF": "1",
+        "Public_Instance": "0",
+        "MediaProxy": ["Test"],
+        "ForwardProxy": ["Test"],
+        "Proxy": []
+    }
 }
