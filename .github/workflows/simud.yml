@@ -11,12 +11,12 @@ jobs:
 
     steps:
       - name: Checkout repository with custom token
-        uses: actions/checkout@v4  # Aggiornato a v4 per consistenza
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.ACTIONS_TOKEN }}
 
       - name: Set up Python
-        uses: actions/setup-python@v5  # Aggiornato a v5 per stabilità
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -41,7 +41,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload M3U8 file as artifact
-        uses: actions/upload-artifact@v4  # Aggiornato a v4
+        uses: actions/upload-artifact@v4
         with:
           name: streaming-m3u8
           path: streaming.m3u8
