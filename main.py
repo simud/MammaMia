@@ -16,7 +16,7 @@ PROXY = config.PROXY if hasattr(config, 'PROXY') else None
 
 # Lista dei contenuti
 CONTENT_LIST = [
-    ("tt0111161", 1, None, None, "Le ali della libertà"),
+    ("tt0111161", 1, None, None, "The Shawshank Redemption"),  # Usa titolo inglese per precisione
     ("tt0468569", 1, None, None, "Il cavaliere oscuro"),
     ("tmdb:1399:1:1", 0, 1, 1, "Il Trono di Spade"),
 ]
@@ -71,10 +71,10 @@ async def generate_m3u8():
                             print(f"[ERRORE] Flusso non valido per '{title}' (status: {test_response.status_code})")
                     else:
                         print(f"[ERRORE] Flusso non trovato per '{title}' al tentativo {attempt + 1}")
-                    await asyncio.sleep(7)  # Ritardo aumentato
+                    await asyncio.sleep(10)  # Ritardo aumentato
                 except Exception as e:
                     print(f"[ERRORE] Errore per '{title}' al tentativo {attempt + 1}: {str(e)}")
-                    await asyncio.sleep(7)
+                    await asyncio.sleep(10)
     
     # Scrivi il file
     with open("streaming.m3u8", "w", encoding="utf-8") as f:
