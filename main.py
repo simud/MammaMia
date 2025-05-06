@@ -6,9 +6,9 @@ import os
 
 # Titoli verificati su https://streamingcommunity.education
 CONTENT_LIST = [
-    ("tt0111161", 1, None, None, "Le ali della libertà"),  # Film
-    ("tt0468569", 1, None, None, "Il cavaliere oscuro"),   # Film
-    ("tmdb:1399:1:1", 0, 1, 1, "Il Trono di Spade"),      # Serie, stagione 1 episodio 1
+    ("tt0111161", 1, None, None, "Le ali della libertà"),  # Film: The Shawshank Redemption
+    ("tt0468569", 1, None, None, "Il cavaliere oscuro"),   # Film: The Dark Knight
+    ("tmdb:1399:1:1", 0, 1, 1, "Il Trono di Spade"),      # Serie: Game of Thrones S01E01
 ]
 
 async def generate_m3u8():
@@ -33,20 +33,20 @@ async def generate_m3u8():
                         break
                     else:
                         print(f"[ERRORE] Nessun flusso trovato per '{title}' al tentativo {attempt + 1}")
-                        await asyncio.sleep(1)  # Attendi 1 secondo prima di riprovare
+                        await asyncio.sleep(2)  # Aumentato a 2 secondi
                 except Exception as e:
                     print(f"[ERRORE] Errore per '{title}' al tentativo {attempt + 1}: {str(e)}")
-                    await asyncio.sleep(1)
+                    await asyncio.sleep(2)
     
     # Scrivi il file
     with open("streaming.m3u8", "w", encoding="utf-8") as f:
         f.write(m3u8_content)
     
-    # Log del contenuto del file
+    # Log del contenuto
     print(f"[INFO] Contenuto di streaming.m3u8:\n{m3u8_content}")
     print(f"[INFO] Flussi trovati: {found_streams}/{len(CONTENT_LIST)}")
     
-    # Controlla se il file è vuoto (solo intestazione)
+    # Controllo file vuoto
     if found_streams == 0:
         print("[ATTENZIONE] Nessun flusso valido trovato. Il file streaming.m3u8 contiene solo l'intestazione.")
 
