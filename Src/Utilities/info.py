@@ -1,169 +1,22 @@
-from Src.Utilities.loadenv import load_env
-from tmdbv3api import TMDb, Movie, TV
-from Src.Utilities.convert_date import convert_US_date, convert_IT_date
 import Src.Utilities.config as config
 import json
-env_vars = load_env()
-TMDB_KEY = env_vars.get('TMDB_KEY')
 
 def get_info_tmdb(tmbda, ismovie, type):
-    tmdb = TMDb()
-    tmdb.api_key = f'{TMDB_KEY}'
-    tmdb.language = 'it'
-    if ismovie == 0:
-        tv = TV()
-        show = tv.details(tmbda)
-        showname = show.name
-        if type == "Filmpertutti":
-            date = show.first_air_date
-            date = date.split("-")[0]
-            print("Real date", date)
-            return showname, date
-        elif type == "StreamingCommunity":
-            full_date = show.first_air_date
-            date = full_date.split("-")[0]
-            print(date)
-            return showname, date
-        elif type == "StreamingCommunityFS":
-            return showname
-        elif type == "Tantifilm":
-            date = show.first_air_date
-            date = date.split("-")[0]
-            print("Real date", date)
-            return showname, date
-        elif type == "TantifilmFS":
-            return showname
-        elif type == "Cool":
-            return showname
-        elif type == "LordChannel":
-            date = show.first_air_date
-            date = date.split("-")[0]
-            print("Real date", date)
-            return showname, date
-        elif type == "StreamingWatch":
-            date = show.first_air_date
-            date = date.split("-")[0]
-            print("Real date", date)
-            return showname, date
-        elif type == "DDLStream":
-            return showname
-        elif type == "Cb01":
-            date = show.first_air_date
-            date = date.split("-")[0]
-            return showname, date
-        elif type == "Whvx":
-            date = show.first_air_date
-            date = date.split("-")[0]
-            return showname, date
-    
-    elif ismovie == 1:
-        movie = Movie()
-        show = movie.details(tmbda)
-        showname = show.title
-        if type == "Filmpertutti":
-            date = show.release_date
-            date = date.split("-")[0]
-            return showname, date
-        elif type == "StreamingCommunity":
-            date = show.release_date
-            date = date.split("-")[0]
-            return showname, date
-        elif type == "StreamingCommunityFS":
-            return showname
-        elif type == "Tantifilm":
-            date = show.release_date
-            date = date.split("-")[0]
-            print("Real date", date)
-            return showname, date
-        elif type == "TantifilmFS":
-            return showname
-        elif type == "Cool":
-            return showname
-        elif type == "LordChannel":
-            date = show.release_date
-            date = date.split("-")[0]
-            print("Real date", date)
-            return showname, date
-        elif type == "StreamingWatch":
-            date = show.release_date
-            date = date.split("-")[0]
-            print("Real date", date)
-            return showname, date
-        elif type == "DDLStream":
-            return showname
-        elif type == "Cb01":
-            date = show.release_date
-            date = date.split("-")[0]
-            return showname, date
-        elif type == "Whvx":
-            date = show.release_date
-            date = date.split("-")[0]
-            return showname, date
+    # Senza TMDb, assumiamo che il titolo sia fornito altrove
+    # Per StreamingCommunityFS, restituiamo un titolo placeholder
+    if type == "StreamingCommunityFS":
+        return "Placeholder Title"
+    # Per StreamingCommunity, non usiamo la data
+    return "Placeholder Title", None
 
 async def get_info_imdb(imdb_id, ismovie, type, client):
-    resp = await client.get(f'https://api.themoviedb.org/3/find/{imdb_id}?api_key={TMDB_KEY}&language=it&external_source=imdb_id')
-    data = resp.json()
-    if ismovie == 0:     
-        showname = data['tv_results'][0]['name']
-        if type == "Filmpertutti":
-            date = data['tv_results'][0]['first_air_date']
-            date = date.split("-")[0]
-            print("Real date", date)
-            return showname, date
-        elif type == "StreamingCommunity":
-            date = data['tv_results'][0]['first_air_date']
-            date = date.split("-")[0]
-            return showname, date
-        elif type == "StreamingCommunityFS":
-            return showname
-        elif type == "Tantifilm":
-            date = data['tv_results'][0]['first_air_date']
-            date = date.split("-")[0]
-            return showname, date
-        elif type == "TantifilmFS":
-            return showname
-        elif type == "Cool":
-            return showname
-        elif type == "DDLStream":
-            return showname
-        elif type == "Cb01":
-            date = data['tv_results'][0]['first_air_date']
-            date = date.split("-")[0]
-            return showname, date
-        elif type == "Whvx":
-            date = data['tv_results'][0]['first_air_date']
-            date = date.split("-")[0]
-            return showname, date
-    elif ismovie == 1:
-        showname = data['movie_results'][0]['title']
-        if type == "Filmpertutti":
-            date = data['movie_results'][0]['release_date']
-            date = date.split("-")[0]
-            return showname, date
-        elif type == "StreamingCommunity":
-            date = data['movie_results'][0]['release_date']
-            date = date.split("-")[0]
-            return showname, date
-        elif type == "StreamingCommunityFS":
-            return showname
-        elif type == "Tantifilm":
-            date = data['movie_results'][0]['release_date']
-            date = date.split("-")[0]
-            return showname, date
-        elif type == "Cool":
-            return showname
-        elif type == "DDLStream":
-            return showname
-        elif type == "Cb01":
-            date = data['movie_results'][0]['release_date']
-            date = date.split("-")[0]
-            return showname, date
-        elif type == "Whvx":
-            date = data['movie_results'][0]['release_date']
-            date = date.split("-")[0]
-            return showname, date
+    # Senza TMDb, assumiamo che il titolo sia fornito altrove
+    if type == "StreamingCommunityFS":
+        return "Placeholder Title"
+    return "Placeholder Title", None
 
 async def get_info_kitsu(kitsu_id, client):
+    # Non usato in streaming_community, lasciato invariato
     api_url = f'https://kitsu.io/api/edge/anime/{kitsu_id}'
     response = await client.get(api_url)
     data = json.loads(response.text)
