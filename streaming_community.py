@@ -1,13 +1,13 @@
 from bs4 import BeautifulSoup
 from Src.Utilities.convert import get_TMDb_id_from_IMDb_id
-from Src.Utilities.info import get_info_tmdb, is_movie, get_info_imdb
+from Src.Utilities.info import is_movie
 import Src.Utilities.config as config
 import json
 import random
 import re
 from urllib.parse import urlparse, parse_qs
-from fake_headers import Headers  
-from Src.Utilities.loadenv import load_env  
+from fake_headers import Headers
+from Src.Utilities.loadenv import load_env
 import urllib.parse
 
 env_vars = load_env()
@@ -16,14 +16,17 @@ Public_Instance = config.Public_Instance
 Alternative_Link = env_vars.get('ALTERNATIVE_LINK')
 
 headers = Headers()
+
 async def get_version(client):
     try:
         random_headers = headers.generate()
-        random_headers['Referer'] = f"https://streamingcommunity.{SC_DOMAIN}/"
-        random_headers['Origin'] = f"https://streamingcommunity.{SC_DOMAIN}"
-        random_headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
-        random_headers['Accept-Language'] = 'en-US,en;q=0.5'
-        base_url = f'https://streamingcommunity.{SC_DOMAIN}/richiedi-un-titolo' 
+        random_headers.update({
+            'Referer': f"https://streamingcommunity.{SC_DOMAIN}/",
+            'Origin': f"https://streamingcommunity.{SC_DOMAIN}",
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5'
+        })
+        base_url = f'https://streamingcommunity.{SC_DOMAIN}/richiedi-un-titolo'
         response = await client.get(base_url, headers=random_headers, allow_redirects=True, impersonate="chrome124")
         if response.status_code != 200:
             print(f"[ERRORE] Risposta non valida per versione: {response.status_code}")
@@ -42,11 +45,13 @@ async def get_version(client):
 
 async def search(query, date, ismovie, client, SC_FAST_SEARCH):
     random_headers = headers.generate()
-    random_headers['Referer'] = f"https://streamingcommunity.{SC_DOMAIN}/"
-    random_headers['Origin'] = f"https://streamingcommunity.{SC_DOMAIN}"
-    random_headers['Accept'] = 'application/json'
-    random_headers['Content-Type'] = 'application/json'
-    random_headers['Accept-Language'] = 'en-US,en;q=0.5'
+    random_headers.update({
+        'Referer': f"https://streamingcommunity.{SC_DOMAIN}/",
+        'Origin': f"https://streamingcommunity.{SC_DOMAIN}",
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Accept-Language': 'en-US,en;q=0.5'
+    })
     try:
         print(f"[INFO] Esecuzione ricerca: {query}")
         response = await client.get(query, headers=random_headers, allow_redirects=True, timeout=30, impersonate="chrome124")
@@ -61,30 +66,30 @@ async def search(query, date, ismovie, client, SC_FAST_SEARCH):
             tid = item['id']
             slug = item['slug']
             item_title = item.get('name', '').lower()
-            type = item['type']
-            if type == "tv":
-                type = 0
-            elif type == "movie":
-                type = 1
-            if type == ismovie:
-                # Corrispondenza esatta o parziale
-                if item_title == query_title or query_title in item_title:
-                    print(f"[SUCCESSO] Trovato titolo con tid={tid}, slug={slug}, titolo={item_title}")
-                    return tid, slug
-        print(f"[ERRORE] Nessun titolo trovato nella ricerca per '{query_title}'")
+            item_type = item['type']
+            if item_type == "tv":
+                type_value = 0
+            elif item_type == "movie":
+                type_value = 1
+            if type_value == ismovie and (item_title == query_title or query_title in item_title):
+                print(f"[SUCCESSO] Trovato titolo con tid={tid}, slug={slug}, titolo={item_title}")
+                return tid, slug
+        print(f"[ERRORE] Nessun titolo trovato per '{query_title}'")
         return None, None
     except Exception as e:
         print(f"[ERRORE] Errore nella ricerca: {str(e)}")
         return None, None
 
-async def get_film(tid, version, client):  
+async def get_film(tid, version, client):
     random_headers = headers.generate()
-    random_headers['Referer'] = f"https://streamingcommunity.{SC_DOMAIN}/"
-    random_headers['Origin'] = f"https://streamingcommunity.{SC_DOMAIN}"
-    random_headers['x-inertia'] = "true"
-    random_headers['x-inertia-version'] = version
-    random_headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
-    random_headers['Accept-Language'] = 'en-US,en;q=0.5'
+    random_headers.update({
+        'Referer': f"https://streamingcommunity.{SC_DOMAIN}/",
+        'Origin': f"https://streamingcommunity.{SC_DOMAIN}",
+        'x-inertia': "true",
+        'x-inertia-version': version,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5'
+    })
     url = f'https://streamingcommunity.{SC_DOMAIN}/iframe/{tid}'
     try:
         print(f"[INFO] Recupero iframe per tid={tid}")
@@ -104,10 +109,12 @@ async def get_film(tid, version, client):
         parsed_url = urlparse(iframe_url)
         query_params = parse_qs(parsed_url.query)
         random_headers = headers.generate()
-        random_headers['Referer'] = f"https://streamingcommunity.{SC_DOMAIN}/"
-        random_headers['Origin'] = f"https://streamingcommunity.{SC_DOMAIN}"
-        random_headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
-        random_headers['Accept-Language'] = 'en-US,en;q=0.5'
+        random_headers.update({
+            'Referer': f"https://streamingcommunity.{SC_DOMAIN}/",
+            'Origin': f"https://streamingcommunity.{SC_DOMAIN}",
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5'
+        })
         resp = await client.get(iframe_url, headers=random_headers, allow_redirects=True, impersonate="chrome124")
         if resp.status_code != 200:
             print(f"[ERRORE] Risposta non valida per iframe content: {resp.status_code}")
@@ -142,14 +149,21 @@ async def get_film(tid, version, client):
 
 async def get_season_episode_id(tid, slug, season, episode, version, client):
     random_headers = headers.generate()
-    random_headers['Referer'] = f"https://streamingcommunity.{SC_DOMAIN}/"
-    random_headers['Origin'] = f"https://streamingcommunity.{SC_DOMAIN}"
-    random_headers['x-inertia'] = "true"
-    random_headers['x-inertia-version'] = version
-    random_headers['Accept'] = 'application/json'
+    random_headers.update({
+        'Referer': f"https://streamingcommunity.{SC_DOMAIN}/",
+        'Origin': f"https://streamingcommunity.{SC_DOMAIN}",
+        'x-inertia': "true",
+        'x-inertia-version': version,
+        'Accept': 'application/json'
+    })
     try:
         print(f"[INFO] Recupero episodio per tid={tid}, stagione={season}, episodio={episode}")
-        response = await client.get(f'https://streamingcommunity.{SC_DOMAIN}/titles/{tid}-{slug}/stagione-{season}', headers=random_headers, allow_redirects=True, impersonate="chrome124")
+        response = await client.get(
+            f'https://streamingcommunity.{SC_DOMAIN}/titles/{tid}-{slug}/stagione-{season}',
+            headers=random_headers,
+            allow_redirects=True,
+            impersonate="chrome124"
+        )
         if response.status_code != 200:
             print(f"[ERRORE] Risposta non valida per episodio: {response.status_code}")
             return None
@@ -158,7 +172,7 @@ async def get_season_episode_id(tid, slug, season, episode, version, client):
             if dict_episode['number'] == episode:
                 print(f"[SUCCESSO] Episodio trovato: ID={dict_episode['id']}")
                 return dict_episode['id']
-        print("[ERRORE] Nessun episodio trovato per la stagione specificata")
+        print("[ERRORE] Nessun episodio trovato")
         return None
     except Exception as e:
         print(f"[ERRORE] Errore in get_season_episode_id: {str(e)}")
@@ -166,17 +180,22 @@ async def get_season_episode_id(tid, slug, season, episode, version, client):
 
 async def get_episode_link(episode_id, tid, version, client):
     random_headers = headers.generate()
-    random_headers['Referer'] = f"https://streamingcommunity.{SC_DOMAIN}/"
-    random_headers['Origin'] = f"https://streamingcommunity.{SC_DOMAIN}"
-    random_headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
-    random_headers['Accept-Language'] = 'en-US,en;q=0.5'
-    params = {
-        'episode_id': episode_id, 
-        'next_episode': '1'
-    }
+    random_headers.update({
+        'Referer': f"https://streamingcommunity.{SC_DOMAIN}/",
+        'Origin': f"https://streamingcommunity.{SC_DOMAIN}",
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5'
+    })
+    params = {'episode_id': episode_id, 'next_episode': '1'}
     try:
         print(f"[INFO] Recupero link episodio per tid={tid}, episode_id={episode_id}")
-        response = await client.get(f"https://streamingcommunity.{SC_DOMAIN}/iframe/{tid}", params=params, headers=random_headers, allow_redirects=True, impersonate="chrome124")
+        response = await client.get(
+            f"https://streamingcommunity.{SC_DOMAIN}/iframe/{tid}",
+            params=params,
+            headers=random_headers,
+            allow_redirects=True,
+            impersonate="chrome124"
+        )
         if response.status_code != 200:
             print(f"[ERRORE] Risposta non valida per episodio: {response.status_code}")
             return None, None, None
@@ -192,10 +211,12 @@ async def get_episode_link(episode_id, tid, version, client):
         parsed_url = urlparse(iframe_url)
         query_params = parse_qs(parsed_url.query)
         random_headers = headers.generate()
-        random_headers['Referer'] = f"https://streamingcommunity.{SC_DOMAIN}/"
-        random_headers['Origin'] = f"https://streamingcommunity.{SC_DOMAIN}"
-        random_headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
-        random_headers['Accept-Language'] = 'en-US,en;q=0.5'
+        random_headers.update({
+            'Referer': f"https://streamingcommunity.{SC_DOMAIN}/",
+            'Origin': f"https://streamingcommunity.{SC_DOMAIN}",
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5'
+        })
         resp = await client.get(iframe_url, headers=random_headers, allow_redirects=True, impersonate="chrome124")
         if resp.status_code != 200:
             print(f"[ERRORE] Risposta non valida per iframe episodio: {resp.status_code}")
@@ -210,7 +231,7 @@ async def get_episode_link(episode_id, tid, version, client):
         expires_match = re.search(r"'expires':\s*'(\d+)'", script_text)
         quality_match = re.search(r'"quality":(\d+)', script_text)
         if not (token_match and expires_match and quality_match):
-            print("[ERRORE] Parametri token, expires o quality non trovati per episodio")
+            print("[ERRORE] Parametri token, expires o quality non trovati")
             return None, None, None
         token = token_match.group(1)
         expires = expires_match.group(1)
@@ -242,30 +263,16 @@ async def streaming_community(imdb, client, SC_FAST_SEARCH, title):
         general = is_movie(imdb)
         ismovie = general[0]
         imdb_id = general[1]
-        if ismovie == 0: 
+        if ismovie == 0:
             season = int(general[2])
             episode = int(general[3])
-            if SC_FAST_SEARCH == "1":
-                type = "StreamingCommunityFS"
-                showname = title
-                date = None
-            elif SC_FAST_SEARCH == "0":
-                type = "StreamingCommunity"
-                tmdba = await get_TMDb_id_from_IMDb_id(imdb_id, client)
-                showname = title
-                date = None
+            showname = title
+            date = None
         else:
-            if SC_FAST_SEARCH == "1":
-                type = "StreamingCommunityFS"
-                showname = title
-                date = None
-            elif SC_FAST_SEARCH == "0":
-                type = "StreamingCommunity"
-                showname = title
-                date = None
+            showname = title
+            date = None
         
-        showname = showname.replace(" ", "+").replace("–", "+").replace("—", "+")
-        showname = urllib.parse.quote_plus(showname)
+        showname = urllib.parse.quote_plus(showname.replace(" ", "+").replace("–", "+").replace("—", "+"))
         query = f'https://streamingcommunity.{SC_DOMAIN}/api/search?q={showname}'
         version = await get_version(client)
         tid, slug = await search(query, date, ismovie, client, SC_FAST_SEARCH)
