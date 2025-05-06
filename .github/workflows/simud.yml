@@ -29,7 +29,7 @@ jobs:
         env:
           GITHUB_WORKSPACE: ${{ github.workspace }}
         run: |
-          python main.py
+          python main.py | tee scraper.log
 
       - name: Commit and push updated M3U8 file
         run: |
@@ -45,4 +45,11 @@ jobs:
         with:
           name: streaming-m3u8
           path: streaming.m3u8
+        continue-on-error: true
+
+      - name: Upload scraper log as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraper-log
+          path: scraper.log
         continue-on-error: true
