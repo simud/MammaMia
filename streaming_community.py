@@ -41,7 +41,7 @@ async def search(query, date, ismovie, client, SC_FAST_SEARCH):
     try:
         print(f"[INFO] Esecuzione ricerca: {query}")
         response = await client.get(query, headers=random_headers, allow_redirects=True, timeout=30)
-        print(f"[INFO] Risposta ricerca: {response.status}")
+        print(f"[INFO] Risposta ricerca: {response.status_code}")
         response_data = response.json()
         print(f"[DEBUG] Risultati ricerca: {response_data}")
         for item in response_data.get('data', []):
@@ -171,7 +171,7 @@ async def get_episode_link(episode_id, tid, version, client):
         print(f"[ERRORE] Errore in get_episode_link: {str(e)}")
         return None, None, None
 
-async def streaming_community(imdb, client, SC_FAST_SEARCH):
+async def streaming_community(imdb, client, SC_FAST_SEARCH, title):
     try:
         if Public_Instance == "1":
             Weird_Link = json.loads(Alternative_Link)
@@ -190,34 +190,22 @@ async def streaming_community(imdb, client, SC_FAST_SEARCH):
             episode = int(general[3])
             if SC_FAST_SEARCH == "1":
                 type = "StreamingCommunityFS"
-                if "tt" in imdb:
-                    showname = "Placeholder Title"
-                    date = None
-                else:
-                    date = None
-                    tmdba = imdb_id.replace("tmdb:", "")
-                    showname = "Placeholder Title"
+                showname = title  # Usa il titolo passato
+                date = None
             elif SC_FAST_SEARCH == "0":
                 type = "StreamingCommunity"
                 tmdba = await get_TMDb_id_from_IMDb_id(imdb_id, client)
-                showname, date = ("Placeholder Title", None) 
+                showname = title
+                date = None
         else:
             if SC_FAST_SEARCH == "1":
                 type = "StreamingCommunityFS"
-                if "tt" in imdb:
-                    date = None
-                    showname = "Placeholder Title"
-                else:
-                    date = None
-                    tmdba = imdb_id.replace("tmdb:", "")
-                    showname = "Placeholder Title" 
+                showname = title  # Usa il titolo passato
+                date = None
             elif SC_FAST_SEARCH == "0":
                 type = "StreamingCommunity"
-                if "tt" in imdb:
-                    showname, date = ("Placeholder Title", None)
-                else:
-                    tmdba = imdb_id.replace("tmdb:", "")
-                    showname, date = ("Placeholder Title", None) 
+                showname = title
+                date = None
         
         showname = showname.replace(" ", "+").replace("–", "+").replace("—", "+")
         showname = urllib.parse.quote_plus(showname)
