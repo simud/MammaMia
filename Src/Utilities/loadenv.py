@@ -4,11 +4,9 @@ MYSTERIUS = config.MYSTERIUS
 dotenv = config.dotenv
 HF = config.HF
 Public_Instance = config.Public_Instance
-#You need to keep dotenv disabled on remote servers
 if dotenv == "1":
     from dotenv import load_dotenv
     load_dotenv(".env")
-
 
 def load_env():
     env_vars = {}
