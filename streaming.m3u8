@@ -1,13 +1,31 @@
 #EXTM3U
-#EXTINF:-1 tvg-name="Le ali della libertà" tvg-quality="1080",Le ali della libertà
-https://vixcloud.co/playlist/206273.m3u8?token=bacbcb89cee46119651722a8444709c2&expires=1751733335&h=1
-#EXTINF:-1 tvg-name="Le ali della libertà (720p)" tvg-quality="720p",Le ali della libertà (720p)
+#EXTINF:-1 tvg-id="sc0111161" group-title="StreamingCommunity" tvg-logo="https://i.postimg.cc/j5d5bSGp/photo-2025-03-13-12-56-42.png",Le ali della libertà
+#EXTVLCOPT:http-referrer=https://streamingcommunity.education
+#EXTVLCOPT:http-origin=https://streamingcommunity.education
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1
+https://vixcloud.co/playlist/206273.m3u8?token=3b86e333e9c0a38fc4048f2df4f7338b&expires=1751733616&h=1
+#EXTINF:-1 tvg-id="sc0111161_720" group-title="StreamingCommunity" tvg-logo="https://i.postimg.cc/j5d5bSGp/photo-2025-03-13-12-56-42.png",Le ali della libertà (720p)
+#EXTVLCOPT:http-referrer=https://streamingcommunity.education
+#EXTVLCOPT:http-origin=https://streamingcommunity.education
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1
 https://vixcloud.co/playlist/206273.m3u8
-#EXTINF:-1 tvg-name="Il cavaliere oscuro" tvg-quality="1080",Il cavaliere oscuro
-https://vixcloud.co/playlist/112147.m3u8?token=e0e580cbaa2afac61c2846d1065015ae&expires=1751733336&h=1
-#EXTINF:-1 tvg-name="Il cavaliere oscuro (720p)" tvg-quality="720p",Il cavaliere oscuro (720p)
+#EXTINF:-1 tvg-id="sc0468569" group-title="StreamingCommunity" tvg-logo="https://i.postimg.cc/j5d5bSGp/photo-2025-03-13-12-56-42.png",Il cavaliere oscuro
+#EXTVLCOPT:http-referrer=https://streamingcommunity.education
+#EXTVLCOPT:http-origin=https://streamingcommunity.education
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1
+https://vixcloud.co/playlist/112147.m3u8?token=41581785aec5ff9182aea0961cbad8b3&expires=1751733617&h=1
+#EXTINF:-1 tvg-id="sc0468569_720" group-title="StreamingCommunity" tvg-logo="https://i.postimg.cc/j5d5bSGp/photo-2025-03-13-12-56-42.png",Il cavaliere oscuro (720p)
+#EXTVLCOPT:http-referrer=https://streamingcommunity.education
+#EXTVLCOPT:http-origin=https://streamingcommunity.education
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1
 https://vixcloud.co/playlist/112147.m3u8
-#EXTINF:-1 tvg-name="Il Trono di Spade" tvg-quality="1080",Il Trono di Spade
-https://vixcloud.co/playlist/173365.m3u8?token=8e2bbde260a8948bcf78eff337d8d67b&expires=1751733338&h=1
-#EXTINF:-1 tvg-name="Il Trono di Spade (720p)" tvg-quality="720p",Il Trono di Spade (720p)
+#EXTINF:-1 tvg-id="1399:1:1" group-title="StreamingCommunity" tvg-logo="https://i.postimg.cc/j5d5bSGp/photo-2025-03-13-12-56-42.png",Il Trono di Spade
+#EXTVLCOPT:http-referrer=https://streamingcommunity.education
+#EXTVLCOPT:http-origin=https://streamingcommunity.education
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1
+https://vixcloud.co/playlist/173365.m3u8?token=b2a67398f17124423c894ceda17ac8f5&expires=1751733619&h=1
+#EXTINF:-1 tvg-id="1399:1:1_720" group-title="StreamingCommunity" tvg-logo="https://i.postimg.cc/j5d5bSGp/photo-2025-03-13-12-56-42.png",Il Trono di Spade (720p)
+#EXTVLCOPT:http-referrer=https://streamingcommunity.education
+#EXTVLCOPT:http-origin=https://streamingcommunity.education
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 17_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1
 https://vixcloud.co/playlist/173365.m3u8
