@@ -10,7 +10,6 @@ if dotenv == "1":
 
 def load_env():
     env_vars = {}
-    env_vars['TMDB_KEY'] = os.getenv('TMDB_KEY')
     if MYSTERIUS == "1":
         env_vars['MYSTERIUS_KEY'] = os.getenv('MYSTERIUS_KEY')
     env_vars['PROXY_CREDENTIALS'] = os.getenv('PROXY')
