@@ -1,1 +1,16 @@
 #EXTM3U
+#EXTINF:-1 tvg-id="sc0111161" group-title="StreamingCommunity" tvg-logo="https://i.postimg.cc/j5d5bSGp/photo-2025-03-13-12-56-42.png",The Shawshank Redemption
+#EXTVLCOPT:http-referrer=https://streamingcommunity.education
+#EXTVLCOPT:http-origin=https://streamingcommunity.education
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+https://vixcloud.co/playlist/206273?token=2633a5a184024e2065dbfe16fb964a8e&expires=1751791030&h=1
+#EXTINF:-1 tvg-id="sc0468569" group-title="StreamingCommunity" tvg-logo="https://i.postimg.cc/j5d5bSGp/photo-2025-03-13-12-56-42.png",Il cavaliere oscuro
+#EXTVLCOPT:http-referrer=https://streamingcommunity.education
+#EXTVLCOPT:http-origin=https://streamingcommunity.education
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+https://vixcloud.co/playlist/112147?token=11269ec6b97923c4339f4ca3eb96a995&expires=1751791032&h=1
+#EXTINF:-1 tvg-id="1399:1:1" group-title="StreamingCommunity" tvg-logo="https://i.postimg.cc/j5d5bSGp/photo-2025-03-13-12-56-42.png",Il Trono di Spade
+#EXTVLCOPT:http-referrer=https://streamingcommunity.education
+#EXTVLCOPT:http-origin=https://streamingcommunity.education
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+https://vixcloud.co/playlist/173365?token=6aa74874ba6ac852faa41f84595bca26&expires=1751791034&h=1
