@@ -11,10 +11,10 @@ REFERRER = f"https://streamingcommunity.{SC_DOMAIN}"
 ORIGIN = f"https://streamingcommunity.{SC_DOMAIN}"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 
-# Configurazione proxy (fortemente consigliato)
+# Configurazione proxy (inserisci il tuo proxy)
 PROXY = config.PROXY if hasattr(config, 'PROXY') else None
 
-# Cookie di sessione manuali (aggiungi i tuoi cookie qui)
+# Cookie di sessione manuali (inserisci i tuoi cookie)
 SESSION_COOKIES = {
     "XSRF-TOKEN": "eyJpdiI6IkRMZy9hKzVpUUxkYlZlT2xOMWVQL1E9PSIsInZhbHVlIjoiTXVoclZKSm5lTHVmRWxmRjVMdEpIc2FKcnRMMTkyTzBoTHkyc0JNSEJsQ2dRYlhtOFk5N3IyYWZ2ZUUzbEJMTkpid0xURytrVDFLOTFhNDhEZndXeHhqTWo0VHVtZzNuOUJoTkpqdWpYQlZ3MVp6WU1RdllUWWNqbUpLNFlTQ2YiLCJtYWMiOiIxZmMzNDQ4Nzg3ZmQ4NmQwYTY1YzMzZDA0NDdkYWUxODdmNTA0NzQ2YTY3YzNlMmY5ODdlYmYyZTYzOGUyYzYyIiwidGFnIjoiIn0%3D",
     "streamingcommunity_session": "eyJpdiI6InhvL2FyRnk1ZjQ1NjZ4Y0FuQ0RwMlE9PSIsInZhbHVlIjoiVEtITWFRaGxmWC8zSUx3amtic2lEM0Y3QitNbFNWZVVMdlVqWExneEs5MjNpR3NYMFpsNUxLVUxIYlhmUWtMcnl1cmJLalZpUUUvU25laVZ5aENmZ2VBeUFoMkIySzEvRHZ6K2VMZEJMNmJILzd1ZnhwZWF6MThZeGtySXNVVWQiLCJtYWMiOiI4OWEwZjcxY2Q5YzY3MzY5ODJiMzFhZGM0NjEwYzUxNDM3M2E1ZmI2ZDMwZDBhZjczZTRjNmY0NmE3ZjZiNGQ4IiwidGFnIjoiIn0%3D"
@@ -77,8 +77,12 @@ async def generate_m3u8():
                                 timeout=10
                             )
                             # Log della risposta per debug
-                            print(f"[DEBUG] Risposta flusso '{title}' (tentativo {test_attempt + 1}): status={test_response.status_code}, content-type={test_response.headers.get('content-type')}")
-                            if test_response.status_code == 200 and ("m3u8" in test_response.text.lower() or "application/vnd.apple.mpegurl" in test_response.headers.get("content-type", "")):
+                            content_type = test_response.headers.get('content-type', '')
+                            print(f"[DEBUG] Risposta flusso '{title}' (tentativo {test_attempt + 1}): status={test_response.status_code}, content-type={content_type}")
+                            # Salva risposta per debug
+                            with open(f"response_{title}_{test_attempt + 1}.html", "w", encoding="utf-8") as f:
+                                f.write(test_response.text)
+                            if test_response.status_code == 200 and ("m3u8" in test_response.text.lower() or "application/vnd.apple.mpegurl" in content_type):
                                 print(f"[SUCCESSO] Flusso valido per '{title}': {url} (Qualità: {quality})")
                                 tvg_id = content_id.replace("tmdb:", "").replace("tt", "sc")
                                 group_title = "StreamingCommunity"
@@ -112,7 +116,7 @@ async def generate_m3u8():
                             break
                     else:
                         print(f"[ERRORE] Flusso non trovato per '{title}' al tentativo {attempt + 1}")
-                    await asyncio.sleep(20)  # Ritardo aumentato
+                    await asyncio.sleep(20)
                 except Exception as e:
                     print(f"[ERRORE] Errore per '{title}' al tentativo {attempt + 1}: {str(e)}")
                     await asyncio.sleep(20)
