@@ -11,8 +11,14 @@ REFERRER = f"https://streamingcommunity.{SC_DOMAIN}"
 ORIGIN = f"https://streamingcommunity.{SC_DOMAIN}"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 
-# Configurazione proxy (opzionale, fortemente consigliato)
+# Configurazione proxy (fortemente consigliato)
 PROXY = config.PROXY if hasattr(config, 'PROXY') else None
+
+# Cookie di sessione manuali (aggiungi i tuoi cookie qui)
+SESSION_COOKIES = {
+    "XSRF-TOKEN": "your_xsrf_token",
+    "streamingcommunity_session": "your_session_cookie"
+}
 
 # Lista dei contenuti
 CONTENT_LIST = [
@@ -29,7 +35,11 @@ async def generate_m3u8():
         session_params["proxies"] = {"http": PROXY, "https": PROXY}
     
     async with AsyncSession(**session_params) as client:
-        # Inizializza la sessione con cookie
+        # Imposta cookie manuali
+        client.cookies.update(SESSION_COOKIES)
+        print(f"[INFO] Cookie impostati: {client.cookies}")
+        
+        # Inizializza la sessione
         try:
             init_response = await client.get(
                 f"https://streamingcommunity.{SC_DOMAIN}/",
@@ -38,7 +48,8 @@ async def generate_m3u8():
                     "Referer": REFERRER,
                     "Origin": ORIGIN,
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-                    "Accept-Language": "en-US,en;q=0.5"
+                    "Accept-Language": "en-US,en;q=0.5",
+                    "Accept-Encoding": "gzip, deflate, br"
                 },
                 timeout=15
             )
@@ -48,23 +59,26 @@ async def generate_m3u8():
         
         for content_id, is_movie, season, episode, title in CONTENT_LIST:
             stream_added = False
-            for attempt in range(5):  # Aumentato a 5 tentativi
+            for attempt in range(5):
                 try:
                     print(f"[INFO] Tentativo {attempt + 1} per '{title}' (ID: {content_id})")
                     url, url720, quality = await streaming_community(content_id, client, "1", title)
                     if url and "vixcloud.co/playlist" in url:
-                        # Verifica token con richiesta diretta
+                        # Verifica flusso
                         for test_attempt in range(3):
                             test_response = await client.get(
                                 url,
                                 headers={
                                     "User-Agent": USER_AGENT,
                                     "Referer": REFERRER,
-                                    "Origin": ORIGIN
+                                    "Origin": ORIGIN,
+                                    "Accept-Encoding": "gzip, deflate, br"
                                 },
                                 timeout=10
                             )
-                            if test_response.status_code == 200 and "m3u8" in test_response.text.lower():
+                            # Log della risposta per debug
+                            print(f"[DEBUG] Risposta flusso '{title}' (tentativo {test_attempt + 1}): status={test_response.status_code}, content-type={test_response.headers.get('content-type')}")
+                            if test_response.status_code == 200 and ("m3u8" in test_response.text.lower() or "application/vnd.apple.mpegurl" in test_response.headers.get("content-type", "")):
                                 print(f"[SUCCESSO] Flusso valido per '{title}': {url} (Qualità: {quality})")
                                 tvg_id = content_id.replace("tmdb:", "").replace("tt", "sc")
                                 group_title = "StreamingCommunity"
@@ -81,7 +95,7 @@ async def generate_m3u8():
                                         headers={"User-Agent": USER_AGENT, "Referer": REFERRER, "Origin": ORIGIN},
                                         timeout=10
                                     )
-                                    if test_720_response.status_code == 200 and "m3u8" in test_720_response.text.lower():
+                                    if test_720_response.status_code == 200 and ("m3u8" in test_720_response.text.lower() or "application/vnd.apple.mpegurl" in test_720_response.headers.get("content-type", "")):
                                         print(f"[SUCCESSO] Flusso 720p valido per '{title}': {url720}")
                                         m3u8_content += f'#EXTINF:-1 tvg-id="{tvg_id}_720" group-title="{group_title}" tvg-logo="{tvg_logo}",{title} (720p)\n'
                                         m3u8_content += f'#EXTVLCOPT:http-referrer={REFERRER}\n'
@@ -98,10 +112,10 @@ async def generate_m3u8():
                             break
                     else:
                         print(f"[ERRORE] Flusso non trovato per '{title}' al tentativo {attempt + 1}")
-                    await asyncio.sleep(15)  # Ritardo aumentato
+                    await asyncio.sleep(20)  # Ritardo aumentato
                 except Exception as e:
                     print(f"[ERRORE] Errore per '{title}' al tentativo {attempt + 1}: {str(e)}")
-                    await asyncio.sleep(15)
+                    await asyncio.sleep(20)
     
     # Scrivi il file
     with open("streaming.m3u8", "w", encoding="utf-8") as f:
