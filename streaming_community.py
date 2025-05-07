@@ -115,7 +115,7 @@ async def get_film(tid, version, client):
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5'
         })
-        for attempt in range(3):
+        for attempt in range(4):  # Aumentato a 4 tentativi
             print(f"[INFO] Tentativo {attempt + 1} per iframe content: {iframe_url}")
             resp = await client.get(iframe_url, headers=random_headers, allow_redirects=True, impersonate="chrome124")
             if resp.status_code == 200:
@@ -123,7 +123,7 @@ async def get_film(tid, version, client):
                 break
             await asyncio.sleep(5)
         else:
-            print(f"[ERRORE] Risposta non valida per iframe content dopo 3 tentativi: {resp.status_code}")
+            print(f"[ERRORE] Risposta non valida per iframe content dopo 4 tentativi: {resp.status_code}")
             return None, None, None
         soup = BeautifulSoup(resp.text, "lxml")
         script = soup.find("body").find("script")
@@ -223,7 +223,7 @@ async def get_episode_link(episode_id, tid, version, client):
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5'
         })
-        for attempt in range(3):
+        for attempt in range(4):
             print(f"[INFO] Tentativo {attempt + 1} per iframe episodio: {iframe_url}")
             resp = await client.get(iframe_url, headers=random_headers, allow_redirects=True, impersonate="chrome124")
             if resp.status_code == 200:
@@ -231,7 +231,7 @@ async def get_episode_link(episode_id, tid, version, client):
                 break
             await asyncio.sleep(5)
         else:
-            print(f"[ERRORE] Risposta non valida per iframe episodio dopo 3 tentativi: {resp.status_code}")
+            print(f"[ERRORE] Risposta non valida per iframe episodio dopo 4 tentativi: {resp.status_code}")
             return None, None, None
         soup = BeautifulSoup(resp.text, "lxml")
         script = soup.find("body").find("script")
