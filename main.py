@@ -16,8 +16,8 @@ PROXY = config.PROXY if hasattr(config, 'PROXY') else None
 
 # Cookie di sessione manuali (aggiungi i tuoi cookie qui)
 SESSION_COOKIES = {
-    "XSRF-TOKEN": "your_xsrf_token",
-    "streamingcommunity_session": "your_session_cookie"
+    "XSRF-TOKEN": "eyJpdiI6IkRMZy9hKzVpUUxkYlZlT2xOMWVQL1E9PSIsInZhbHVlIjoiTXVoclZKSm5lTHVmRWxmRjVMdEpIc2FKcnRMMTkyTzBoTHkyc0JNSEJsQ2dRYlhtOFk5N3IyYWZ2ZUUzbEJMTkpid0xURytrVDFLOTFhNDhEZndXeHhqTWo0VHVtZzNuOUJoTkpqdWpYQlZ3MVp6WU1RdllUWWNqbUpLNFlTQ2YiLCJtYWMiOiIxZmMzNDQ4Nzg3ZmQ4NmQwYTY1YzMzZDA0NDdkYWUxODdmNTA0NzQ2YTY3YzNlMmY5ODdlYmYyZTYzOGUyYzYyIiwidGFnIjoiIn0%3D",
+    "streamingcommunity_session": "eyJpdiI6InhvL2FyRnk1ZjQ1NjZ4Y0FuQ0RwMlE9PSIsInZhbHVlIjoiVEtITWFRaGxmWC8zSUx3amtic2lEM0Y3QitNbFNWZVVMdlVqWExneEs5MjNpR3NYMFpsNUxLVUxIYlhmUWtMcnl1cmJLalZpUUUvU25laVZ5aENmZ2VBeUFoMkIySzEvRHZ6K2VMZEJMNmJILzd1ZnhwZWF6MThZeGtySXNVVWQiLCJtYWMiOiI4OWEwZjcxY2Q5YzY3MzY5ODJiMzFhZGM0NjEwYzUxNDM3M2E1ZmI2ZDMwZDBhZjczZTRjNmY0NmE3ZjZiNGQ4IiwidGFnIjoiIn0%3D"
 }
 
 # Lista dei contenuti
