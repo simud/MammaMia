@@ -109,9 +109,6 @@ async def get_film(tid, version, client):
         print(f"[INFO] Iframe trovato: {iframe_url}")
         vixid = iframe_url.split("/embed/")[1].split("?")[0]
         print(f"[INFO] vixid estratto: {vixid}")
-        # Verifica manuale per The Shawshank Redemption
-        if tid == "2436" and vixid == "206273":
-            print("[ATTENZIONE] vixid=206273 potrebbe essere errato per 'The Shawshank Redemption'")
         parsed_url = urlparse(iframe_url)
         query_params = parse_qs(parsed_url.query)
         random_headers = headers.generate()
@@ -294,19 +291,14 @@ async def streaming_community(imdb, client, SC_FAST_SEARCH, title):
             showname = title
             date = None
         
-        # Forza tid per The Shawshank Redemption
-        if imdb == "tt0111161":
-            tid = "2436"
-            slug = "the-shawshank-redemption"
-            print(f"[INFO] Forzatura tid=2436 per 'The Shawshank Redemption'")
-        else:
-            showname = urllib.parse.quote_plus(showname.replace(" ", "+").replace("–", "+").replace("—", "+"))
-            query = f'https://streamingcommunity.{SC_DOMAIN}/api/search?q={showname}'
-            version = await get_version(client)
-            tid, slug = await search(query, date, ismovie, client, SC_FAST_SEARCH)
-            if tid is None or slug is None:
-                print(f"[ERRORE] Ricerca fallita per '{showname}'")
-                return None, None, None
+        # Cerca tid dinamicamente
+        showname = urllib.parse.quote_plus(showname.replace(" ", "+").replace("–", "+").replace("—", "+"))
+        query = f'https://streamingcommunity.{SC_DOMAIN}/api/search?q={showname}'
+        version = await get_version(client)
+        tid, slug = await search(query, date, ismovie, client, SC_FAST_SEARCH)
+        if tid is None or slug is None:
+            print(f"[ERRORE] Ricerca fallita per '{showname}'")
+            return None, None, None
         
         version = await get_version(client)
         if ismovie == 1:
