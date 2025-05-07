@@ -36,6 +36,6 @@
         "Public_Instance": "0",
         "MediaProxy": ["Test"],
         "ForwardProxy": ["Test"],
-        "Proxy": []
+        "Proxy": [http://123.45.67.89:8080]
     }
 }
