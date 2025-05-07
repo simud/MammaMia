@@ -36,6 +36,6 @@
         "Public_Instance": "0",
         "MediaProxy": ["Test"],
         "ForwardProxy": ["Test"],
-        "Proxy": [http://mfp2.nzo66.com:80?api_password=mfp123]
+        "Proxy": [206.206.69.204]
     }
 }
