@@ -24,24 +24,25 @@ async def get_version(client):
             'Referer': f"https://streamingcommunity.{SC_DOMAIN}/",
             'Origin': f"https://streamingcommunity.{SC_DOMAIN}",
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5'
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate, br'
         })
         base_url = f'https://streamingcommunity.{SC_DOMAIN}/richiedi-un-titolo'
         response = await client.get(base_url, headers=random_headers, allow_redirects=True, impersonate="chrome124")
         if response.status_code != 200:
             print(f"[ERRORE] Risposta non valida per versione: {response.status_code}")
-            return "65e52dcf34d64173542cd2dc6b8bb75b"
+            return "8c6367b1fe6273bd9bc1eb81f92ca882"
         soup = BeautifulSoup(response.text, "lxml")
         app_div = soup.find("div", {"id": "app"})
         if not app_div:
             print("[ERRORE] Div #app non trovato")
-            return "65e52dcf34d64173542cd2dc6b8bb75b"
+            return "8c6367b1fe6273bd9bc1eb81f92ca882"
         version = json.loads(app_div.get("data-page"))['version']
         print(f"[INFO] Versione trovata: {version}")
         return version
     except Exception as e:
         print(f"[ERRORE] Impossibile trovare la versione: {str(e)}")
-        return "65e52dcf34d64173542cd2dc6b8bb75b"
+        return "8c6367b1fe6273bd9bc1eb81f92ca882"
 
 async def search(query, date, ismovie, client, SC_FAST_SEARCH):
     random_headers = headers.generate()
@@ -50,7 +51,8 @@ async def search(query, date, ismovie, client, SC_FAST_SEARCH):
         'Origin': f"https://streamingcommunity.{SC_DOMAIN}",
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Accept-Language': 'en-US,en;q=0.5'
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br'
     })
     try:
         print(f"[INFO] Esecuzione ricerca: {query}")
@@ -88,7 +90,8 @@ async def get_film(tid, version, client):
         'x-inertia': "true",
         'x-inertia-version': version,
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5'
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br'
     })
     url = f'https://streamingcommunity.{SC_DOMAIN}/iframe/{tid}'
     try:
@@ -106,6 +109,9 @@ async def get_film(tid, version, client):
         print(f"[INFO] Iframe trovato: {iframe_url}")
         vixid = iframe_url.split("/embed/")[1].split("?")[0]
         print(f"[INFO] vixid estratto: {vixid}")
+        # Verifica manuale per The Shawshank Redemption
+        if tid == "2436" and vixid == "206273":
+            print("[ATTENZIONE] vixid=206273 potrebbe essere errato per 'The Shawshank Redemption'")
         parsed_url = urlparse(iframe_url)
         query_params = parse_qs(parsed_url.query)
         random_headers = headers.generate()
@@ -113,9 +119,10 @@ async def get_film(tid, version, client):
             'Referer': f"https://streamingcommunity.{SC_DOMAIN}/",
             'Origin': f"https://streamingcommunity.{SC_DOMAIN}",
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5'
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate, br'
         })
-        for attempt in range(4):  # Aumentato a 4 tentativi
+        for attempt in range(4):
             print(f"[INFO] Tentativo {attempt + 1} per iframe content: {iframe_url}")
             resp = await client.get(iframe_url, headers=random_headers, allow_redirects=True, impersonate="chrome124")
             if resp.status_code == 200:
@@ -160,7 +167,8 @@ async def get_season_episode_id(tid, slug, season, episode, version, client):
         'Origin': f"https://streamingcommunity.{SC_DOMAIN}",
         'x-inertia': "true",
         'x-inertia-version': version,
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Accept-Encoding': 'gzip, deflate, br'
     })
     try:
         print(f"[INFO] Recupero episodio per tid={tid}, stagione={season}, episodio={episode}")
@@ -190,7 +198,8 @@ async def get_episode_link(episode_id, tid, version, client):
         'Referer': f"https://streamingcommunity.{SC_DOMAIN}/",
         'Origin': f"https://streamingcommunity.{SC_DOMAIN}",
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5'
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br'
     })
     params = {'episode_id': episode_id, 'next_episode': '1'}
     try:
@@ -221,7 +230,8 @@ async def get_episode_link(episode_id, tid, version, client):
             'Referer': f"https://streamingcommunity.{SC_DOMAIN}/",
             'Origin': f"https://streamingcommunity.{SC_DOMAIN}",
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5'
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate, br'
         })
         for attempt in range(4):
             print(f"[INFO] Tentativo {attempt + 1} per iframe episodio: {iframe_url}")
